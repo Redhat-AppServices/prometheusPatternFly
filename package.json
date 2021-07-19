@@ -1,6 +1,6 @@
 {
-  "name": "@app-data-services/prometheusPF",
-  "version": "0.0.0-development",
+  "name": "@app-data-services/prometheus-pf",
+  "version": "1.0.3",
   "description": "PatternFly charts the work with prometheus",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
