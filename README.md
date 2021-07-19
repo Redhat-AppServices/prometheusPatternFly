@@ -1,2 +1,2 @@
 # prometheusPatternFly
-This library contains patternfly charts that are design to work with 
+This library contains patternfly charts that are design to work with Prometheus.
