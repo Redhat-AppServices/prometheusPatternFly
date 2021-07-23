@@ -30,11 +30,15 @@
   },
   "homepage": "https://github.com/Redhat-AppServices/prometheusPatternFly#readme",
   "devDependencies": {
+    "@types/classnames": "^2.3.1",
+    "@types/lodash-es": "^4.17.x",
+    "@types/react": "^17.0.14",
     "@typescript-eslint/eslint-plugin": "4.28.3",
     "@typescript-eslint/parser": "4.28.3",
     "copyfiles": "2.4.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "7.30.0",
+    "node-sass": "^6.0.1",
     "rimraf": "3.0.2",
     "semantic-release": "^17.4.4",
     "tsconfig-paths": "3.9.0",
@@ -42,13 +46,18 @@
   },
   "dependencies": {
     "@patternfly/patternfly": "4.108.2",
+    "@patternfly/react-charts": "^6.15.3",
     "@patternfly/react-core": "4.128.2",
     "@patternfly/react-icons": "4.10.11",
+    "@patternfly/react-styles": "^4.11.0",
     "@patternfly/react-table": "4.27.24",
+    "classnames": "^2.3.1",
+    "lodash-es": "^4.17.21",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-router-dom": "5.2.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "victory-core": "^35.9.2"
   },
   "config": {
     "commitizen": {
