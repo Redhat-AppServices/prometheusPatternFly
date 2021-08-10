@@ -1,26 +1,3 @@
-.graph-wrapper {
-  align-items: stretch;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  margin-top: 0;
-  overflow: visible;
-  padding-top: 15px;
-  width: 100%;
-}
-
-.graph-wrapper svg {
-  overflow: visible !important;
-}
-
-.graph-wrapper.graph-wrapper--prometheus-chart {
-  padding: 5px 15px 15px 60px;
-}
-
-.graph-wrapper.graph-wrapper--prometheus-chart--with-legend {
-  min-height: 305px;
-}
-
 .nowrap {
   white-space: nowrap;
 }

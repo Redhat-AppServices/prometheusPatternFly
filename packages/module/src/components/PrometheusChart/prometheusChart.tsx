@@ -15,8 +15,7 @@ import './PrometheusChart.css';
 import { PrometheusEndpoint, getPrometheusURL } from '../../utils/get-prometheus-url';
 export interface PrometheusChartProps {
     graphType: GraphTypes;
-    queries: string[];
-    basePath: string;
+    fetchOptions: FetchOptions | (() => Promise<PrometheusResponse[]>);
     defaultSamples?: number;
     showLegend?: boolean;
     showStackedControl?: boolean;
@@ -27,7 +26,6 @@ export interface PrometheusChartProps {
     thresholdText?: string;
     formatSeriesTitle?: FormatSeriesTitle;
 };
-
 interface PrometheusChartGraphProps {
     allSeries: Series[][];
     span: number;
@@ -36,6 +34,12 @@ interface PrometheusChartGraphProps {
     showLegend?: boolean;
     thresholdData?: ThresholdData;
     formatSeriesTitle?: FormatSeriesTitle;
+};
+
+type FetchOptions = {
+    basePath: string;
+    queries: string[];
+    options?: any;
 };
 
 type ThresholdData = {
@@ -78,6 +82,14 @@ type TooltipProps = {
     x?: number;
     threshold?: number;
     thresholdText?: string;
+};
+
+type LegendData = {
+    name: string;
+    symbol?: {
+        fill?: string;
+        type?: string;
+    }
 };
 
 const pfDependentAxisTickLabels = {
@@ -194,12 +206,12 @@ const getThresholdData = (
     span: number,
     end: number,
 ): GraphDataPoint[] => {
-    const newThresholdData: (GraphDataPoint & {name: string})[] = [];
+    const newThresholdData: GraphDataPoint[] = [];
     const start = end - span;
     const step = span / 30;
-    _.range(start, end, step).forEach((t, i) => {
+    _.range(start, end + step, step).forEach(t => {
         const x = new Date(t);
-        newThresholdData.push({x, y: threshold, name: "Threshold"})
+        newThresholdData.push({x, y: threshold})
     })
     return newThresholdData;
 }
@@ -222,6 +234,12 @@ const Tooltip: React.FC<TooltipProps> = ({ activePoints, center, height, style, 
     return null;
   }
 
+  // Don't show the tooltip is the cursor is out of the graph (can happen when cursor is on the legend area)
+  // because chart padding-top is 25 and padding bottom is 110
+  if (height! - center!.y <= 110 || center!.y <= 25) {
+      return null;
+  }
+
   // Pick tooltip width and location (left or right of the cursor) to maximize its available space
   const tooltipMaxWidth = Math.min(width! / 2 + 60, TOOLTIP_MAX_WIDTH);
   const isOnLeft = x! > (width! - 40) / 2;
@@ -239,6 +257,8 @@ const Tooltip: React.FC<TooltipProps> = ({ activePoints, center, height, style, 
     .slice(0, TOOLTIP_MAX_ENTRIES);
 
   return (
+    // Make sure the <line> element is in the area of graph, set y1 to 25, the same as chart padding-top
+    // and set y2 to height-110, the same as chart padding-bottom
     <>
       <VictoryPortal>
         <foreignObject
@@ -271,19 +291,18 @@ const Tooltip: React.FC<TooltipProps> = ({ activePoints, center, height, style, 
           </div>
         </foreignObject>
       </VictoryPortal>
-      <line className="prometheus-chart__tooltip-line" x1={x} x2={x} y1="0" y2={height} />
+      <line className="prometheus-chart__tooltip-line" x1={x} x2={x} y1="25" y2={height!-110} /> 
     </>
   );
 };
 
 export const PrometheusChart: React.FunctionComponent<PrometheusChartProps> = ({
-    basePath,
+    fetchOptions,
     defaultSamples,
     timespan=parsePrometheusDuration('30m'),
     graphType,
     showLegend,
     pollInterval,
-    queries,
     threshold,
     thresholdText,
     formatSeriesTitle
@@ -318,21 +337,21 @@ export const PrometheusChart: React.FunctionComponent<PrometheusChartProps> = ({
             setThresholdData(newThresholdData);
         }
 
-        const allPromises = _.map(queries, (query) => 
-            _.isEmpty(query)
-                ? Promise.resolve()
-                : fetch(
-                    getPrometheusURL(basePath, {
-                        endpoint: PrometheusEndpoint.QUERY_RANGE,
-                        endTime: now,
-                        query,
-                        samples,
-                        timeout: '30s',
-                        timespan: span,
-                    })
-                )
-                .then(response => response.json())
-        );
+        const allPromises = _.isFunction(fetchOptions) ? [fetchOptions()] : _.map(fetchOptions.queries, (query) => 
+                _.isEmpty(query)
+                    ? Promise.resolve()
+                    : fetch(
+                        getPrometheusURL(fetchOptions.basePath, {
+                            endpoint: PrometheusEndpoint.QUERY_RANGE,
+                            endTime: now,
+                            query,
+                            samples,
+                            timeout: '30s',
+                            timespan: span,
+                        }), fetchOptions.options
+                    )
+                    .then(response => response.json())
+            );
     
         return Promise.all(allPromises)
             .then((responses: PrometheusResponse[]) => {
@@ -361,27 +380,25 @@ export const PrometheusChart: React.FunctionComponent<PrometheusChartProps> = ({
         delay = Math.max(span / 120, minPollInterval);
     }
 
-    const queriesKey = _.reject(queries, _.isEmpty).join();
+    const queriesKey = _.isFunction(fetchOptions) ? undefined : _.reject(fetchOptions.queries, _.isEmpty).join();
+
     usePoll(tick, delay, queriesKey, samples, span);
 
     return (
-        <div
-            className={classNames('graph-wrapper graph-wrapper--prometheus-chart', {
-                'graph-wrapper--prometheus-chart--with-legend': showLegend,
-            })}
-        >
-            <div ref={containerRef} style={{ width: '100%' }}>
-                {width > 0 && 
-                (<PrometheusChartGraph 
-                    allSeries={graphData}
-                    isStack={graphType === GraphTypes.area}
-                    formatSeriesTitle={formatSeriesTitle}
-                    showLegend={showLegend}
-                    span={span}
-                    width={width}
-                    thresholdData={thresholdData}
-                />)}
-            </div>
+        <div ref={containerRef}>
+            {width > 0 && 
+
+                    <PrometheusChartGraph 
+                        allSeries={graphData}
+                        isStack={graphType === GraphTypes.area}
+                        formatSeriesTitle={formatSeriesTitle}
+                        showLegend={showLegend}
+                        span={span}
+                        width={width}
+                        thresholdData={thresholdData}
+                    />
+    
+            }
         </div>
     )
 }
@@ -398,7 +415,7 @@ const PrometheusChartGraph: React.FunctionComponent<PrometheusChartGraphProps> =
     const [xDomain, setXDomain] = React.useState(getXDomain(Date.now(), span));
     const data: GraphSeries[] = [];
     const tooltipSeriesNames: string[] = [];
-    const legendData: { name: string }[] = [];
+    const legendData: LegendData[] = [];
 
     React.useEffect(() => {
         setXDomain(getXDomain(Date.now(), span));
@@ -418,6 +435,16 @@ const PrometheusChartGraph: React.FunctionComponent<PrometheusChartGraphProps> =
         });
     });
 
+    if (!_.isEmpty(thresholdData)) {
+        legendData.push({
+            name: thresholdData?.thresholdText ?? 'Limit',
+            symbol: {
+                fill: chart_color_black_500.value,
+                type: 'threshold',
+            }
+        })
+    }
+
     const domain = { x: xDomain, y: undefined };
 
     const graphContainer = (
@@ -431,7 +458,6 @@ const PrometheusChartGraph: React.FunctionComponent<PrometheusChartGraphProps> =
         />
     );
 
-    const xAxisTickCount = Math.round(width / 100);
     const xAxisTickFormat = (d: number | Date)=> {
         return timeFormatter.format(d);
     };
@@ -442,7 +468,7 @@ const PrometheusChartGraph: React.FunctionComponent<PrometheusChartGraphProps> =
     return (
         <Chart
             ariaTitle={`Prometheus Chart`}
-            containerComponent={graphContainer}
+            containerComponent={graphContainer} 
             domain={domain}
             domainPadding={{ y: 1 }}
             legendPosition="bottom-left"
@@ -453,21 +479,29 @@ const PrometheusChartGraph: React.FunctionComponent<PrometheusChartGraphProps> =
                 style={{
                     labels: { fontSize: 12 },
                 }}
-                symbolSpacer={4}
+                symbolSpacer={6}
             />) : undefined}
-            height={200}
+            padding={{
+                bottom: 110, // Adjusted to accomodate legend
+                left: 90,
+                right: 60,
+                top: 25,
+            }}
+            height={350}
             theme={theme}
             scale={{ x: 'time', y: 'linear' }}
             width={width}
         >
             <ChartAxis
-                tickCount={xAxisTickCount}
+                tickCount={6}
                 tickFormat={xAxisTickFormat}
+                fixLabelOverlap
             />
             <ChartAxis
                 crossAxis={false}
                 dependentAxis
                 tickCount={6}
+                tickFormat={formatValue}
             />
             <GroupComponent>
                 {data.map((values, i) => {
