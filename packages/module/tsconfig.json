@@ -22,14 +22,14 @@
     "declarationMap": true,
     "isolatedModules": true,
     "paths": {
-      "@mas/*": ["src/*"]
+      "@mas/*": ["module/src/*"]
     },
     "plugins": [
       { "transform": "transformer-cjs-imports" }
     ]
   },
   "include": [
-    "src/**/*"
+    "../module/src/**/*"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "../node_modules"]
 }

@@ -1,0 +1,3 @@
+.prometheus-card__header {
+  border-bottom: 1px solid var(--pf-global--BorderColor--100);
+}

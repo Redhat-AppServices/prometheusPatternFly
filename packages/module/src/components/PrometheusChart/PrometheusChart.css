@@ -1,0 +1,73 @@
+.nowrap {
+  white-space: nowrap;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prometheus-chart__series-btn {
+  border: 1px solid transparent;
+  border-radius: var(--pf-global--BorderRadius--sm);
+  height: 20px;
+  padding: 0 !important;
+  width: 20px;
+}
+
+.prometheus-chart__tooltip {
+  background-color: var(--pf-global--BackgroundColor--dark-100);
+  color: #eee;
+  font-size: 12px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.prometheus-chart__tooltip-arrow {
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid var(--pf-global--BackgroundColor--dark-100);
+  border-top: 12px solid transparent;
+  height: 0;
+  width: 0;
+}
+
+.prometheus-chart__tooltip-group {
+  align-items: stretch;
+  display: flex;
+}
+
+.prometheus-chart__tooltip-group .prometheus-chart__series-btn {
+  flex: 0 0 12px;
+  height: 12px;
+  margin-top: 4px;
+  margin-right: 3px;
+}
+
+.prometheus-chart__tooltip-line {
+  stroke: var(--pf-global--BackgroundColor--dark-100);
+}
+
+.prometheus-chart__tooltip-time {
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
+.prometheus-chart__tooltip-value {
+  font-weight: var(--pf-global--FontWeight--bold);
+  margin-left: auto;
+  padding-left: 10px;
+}
+
+.prometheus-chart__tooltip-wrap {
+  align-items: center;
+  display: flex;
+  height: 100%;
+}
+
+.prometheus-chart__tooltip-wrap--left {
+  flex-direction: row-reverse;
+}
+
+.prometheus-chart__tooltip-wrap--left .prometheus-chart__tooltip-arrow {
+  border-left: 12px solid var(--pf-global--BackgroundColor--dark-100);
+  border-right: none;
+}
