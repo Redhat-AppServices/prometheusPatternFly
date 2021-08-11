@@ -34,15 +34,19 @@ const App = () => {
     <PageSidebar aria-label="Nav" nav="navigation" />
   );
 
+  const fetchOptions = {
+    basePath: 'http://localhost:9090',
+    queries: ["rate(node_cpu_seconds_total{mode='system'}[1m])"]
+  };
+
   return (
     <Page isManagedSidebar header={AppHeader} sidebar={SideBar}>
       <PageSection variant={PageSectionVariants.default}>
         <PrometheusCard title="CPU usage">
           <PrometheusChart
-            basePath='http://localhost:9090'
+            fetchOptions={fetchOptions}
             defaultSamples={60}
             pollInterval={30*1000}
-            queries={["rate(node_cpu_seconds_total{mode='system'}[1m])"]}
             graphType={GraphTypes.area}
             formatSeriesTitle={(labels) => `cpu${labels.cpu}`}
             threshold={1.6}

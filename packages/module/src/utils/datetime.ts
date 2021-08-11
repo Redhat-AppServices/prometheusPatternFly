@@ -1,60 +1,67 @@
 // https://github.com/openshift/console/blob/master/frontend/public/components/utils/datetime.ts
-import * as _ from 'lodash-es';
+import * as _ from "lodash-es";
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
 export const maxClockSkewMS = -60000;
 
 // https://tc39.es/ecma402/#datetimeformat-objects
-export const timeFormatter = new Intl.DateTimeFormat('en', {
-  hour: 'numeric',
-  minute: 'numeric',
+export const timeFormatter = new Intl.DateTimeFormat("en", {
+  hour: "numeric",
+  minute: "numeric",
 });
 
-export const timeFormatterWithSeconds = new Intl.DateTimeFormat('en', {
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
+export const timeFormatterWithSeconds = new Intl.DateTimeFormat("en", {
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
 });
 
-export const dateFormatter = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
+export const dateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
 });
 
-export const dateFormatterNoYear = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  day: 'numeric',
+export const dateFormatterNoYear = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
 });
 
-export const dateTimeFormatter = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  year: 'numeric',
+export const dateTimeFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  year: "numeric",
 });
 
-export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  year: 'numeric',
+export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  year: "numeric",
 });
 
-export const utcDateTimeFormatter = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-  timeZoneName: 'short',
+export const utcDateTimeFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+  timeZoneName: "short",
 });
 
-export const getDuration = (ms: number) => {
+export type Duration = {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
+
+export const getDuration = (ms: number): Duration => {
   if (!ms || ms < 0) {
     ms = 0;
   }
@@ -68,7 +75,8 @@ export const getDuration = (ms: number) => {
   return { days, hours, minutes, seconds };
 };
 
-export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
+export const isValid = (dateTime: Date): boolean =>
+  dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
 
 // Conversions between units and milliseconds
 const s = 1000;
@@ -79,12 +87,12 @@ const w = d * 7;
 const units = { w, d, h, m, s };
 
 // Formats a duration in milliseconds like "1h 10m"
-export const formatPrometheusDuration = (ms: number) => {
+export const formatPrometheusDuration = (ms: number): string => {
   if (!_.isFinite(ms) || ms < 0) {
-    return '';
+    return "";
   }
   let remaining = ms;
-  let str = '';
+  let str = "";
   _.each(units, (factor, unit) => {
     const n = Math.floor(remaining / factor);
     if (n > 0) {
@@ -103,22 +111,33 @@ export const parsePrometheusDuration = (duration: string): number => {
       .trim()
       .split(/\s+/)
       .map((p) => p.match(/^(\d+)([wdhms])$/));
-    return _.sumBy(parts, (p) => parseInt(p![1], 10) * units[p![2]]);
+    return _.sumBy(parts, (p) => {
+      if (p == null) {
+        throw new Error("Invalid Duration Format");
+      }
+      return parseInt(p[1], 10) * units[p[2]];
+    });
   } catch (ignored) {
     // Invalid duration format
     return 0;
   }
 };
 
-const zeroPad = (number: number) => (number < 10 ? `0${number}` : number);
+const zeroPad = (number: number): number | string =>
+  number < 10 ? `0${number}` : number;
 
 // Get YYYY-MM-DD date string for a date object
 export const toISODateString = (date: Date): string =>
-  `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`;
+  `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(
+    date.getDate()
+  )}`;
 
-export const twentyFourHourTime = (date: Date, showSeconds?: boolean): string => {
+export const twentyFourHourTime = (
+  date: Date,
+  showSeconds?: boolean
+): string => {
   const hours = zeroPad(date.getHours() ?? 0);
   const minutes = `:${zeroPad(date.getMinutes() ?? 0)}`;
-  const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : '';
+  const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : "";
   return `${hours}${minutes}${seconds}`;
 };
