@@ -1,4 +1,10 @@
-import * as _ from 'lodash-es';
+import * as _ from "lodash-es";
+
+type NumberSI = {
+  string: string;
+  value: number;
+  unit?: string;
+};
 
 const getDefaultFractionDigits = (value: number) => {
   if (value < 1) {
@@ -10,7 +16,12 @@ const getDefaultFractionDigits = (value: number) => {
   return 1;
 };
 
-const convertBaseValueToUnits = (value: number, unitArray: string[], divisor: number, initialUnit?: string): {value: number, unit?: string} => {
+const convertBaseValueToUnits = (
+  value: number,
+  unitArray: string[],
+  divisor: number,
+  initialUnit?: string
+): { value: number; unit?: string } => {
   // duplicate the units
   const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
   const units_ = unitArray.slice(sliceIndex);
@@ -22,7 +33,7 @@ const convertBaseValueToUnits = (value: number, unitArray: string[], divisor: nu
   return { value, unit };
 };
 
-const round = (value:number): number => {
+const round = (value: number): number => {
   if (!isFinite(value)) {
     return 0;
   }
@@ -30,6 +41,7 @@ const round = (value:number): number => {
   return Math.round(value * multiplier) / multiplier;
 };
 
+// eslint-disable-next-line
 const formatValue = (value: number, options?: any) => {
   const fractionDigits = getDefaultFractionDigits(value);
   const { locales, ...rest } = _.defaults(options, {
@@ -44,22 +56,27 @@ const formatValue = (value: number, options?: any) => {
 };
 
 // Format the number to SI, e.g. 1313546240 => 1.31G
-export const humanizeNumberSI = (v: number) => {
+export const humanizeNumberSI = (v: number): NumberSI => {
   const typeSI = {
-      units: ['', 'k', 'M', 'G', 'T', 'P', 'E'],
-      divisor: 1000,
+    units: ["", "k", "M", "G", "T", "P", "E"],
+    divisor: 1000,
   };
   if (!isFinite(v)) {
-      v = 0;
+    v = 0;
   }
-  
+
   let converted = convertBaseValueToUnits(v, typeSI.units, typeSI.divisor);
   converted.value = round(converted.value);
-  converted = convertBaseValueToUnits(converted.value, typeSI.units, typeSI.divisor, converted.unit);
+  converted = convertBaseValueToUnits(
+    converted.value,
+    typeSI.units,
+    typeSI.divisor,
+    converted.unit
+  );
   const formattedValue = formatValue(converted.value);
   return {
     string: formattedValue + converted.unit,
     unit: converted.unit,
     value: converted.value,
   };
-}
+};

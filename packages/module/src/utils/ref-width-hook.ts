@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-export const useRefWidth = () => {
+type RefWidth = [React.MutableRefObject<HTMLDivElement>, number];
+
+export const useRefWidth = (): RefWidth => {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>();
 
@@ -8,9 +10,9 @@ export const useRefWidth = () => {
 
   useEffect(() => {
     const handleResize = () => setWidth(ref?.current?.clientWidth);
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -18,5 +20,5 @@ export const useRefWidth = () => {
     setWidth(clientWidth);
   }, [clientWidth]);
 
-  return [ref, width] as [React.MutableRefObject<HTMLDivElement>, number];
+  return [ref, width] as RefWidth;
 };

@@ -2,5 +2,14 @@
   "name": "@app-data-services/prometheus-pf-root",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "yarn workspace @app-data-services/prometheus-pf build",
+    "start": "yarn workspace dev start",
+    "format:module": "prettier --check --write packages/module/src/**/*.{tsx,ts}",
+    "eslint": "eslint --ext .js,.jsx,.ts,.tsx --color",
+    "lint": "yarn lint:module && yarn lint:dev",
+    "lint:module": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/module/src",
+    "lint:dev": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/dev"
+  }
 }
