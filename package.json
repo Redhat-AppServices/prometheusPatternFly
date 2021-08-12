@@ -10,6 +10,7 @@
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --color",
     "lint": "yarn lint:module && yarn lint:dev",
     "lint:module": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/module/src",
-    "lint:dev": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/dev"
+    "lint:dev": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/dev",
+    "semantic-release": "yarn workspace @app-data-services/prometheus-pf semantic-release"
   }
 }
