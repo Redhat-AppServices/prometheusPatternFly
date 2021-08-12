@@ -1,7 +1,7 @@
 {
   "name": "@app-data-services/prometheus-pf-root",
   "version": "0.0.0",
-  "private": false,
+  "private": true,
   "license": "MIT",
   "workspaces": ["packages/*"],
   "scripts": {
@@ -12,6 +12,5 @@
     "lint": "yarn lint:module && yarn lint:dev",
     "lint:module": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/module/src",
     "lint:dev": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint packages/dev",
-    "semantic-release": "yarn workspace @app-data-services/prometheus-pf semantic-release"
   }
 }
