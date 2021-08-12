@@ -2,6 +2,7 @@
   "name": "@app-data-services/prometheus-pf-root",
   "version": "0.0.0",
   "private": false,
+  "license": "MIT",
   "workspaces": ["packages/*"],
   "scripts": {
     "build": "yarn workspace @app-data-services/prometheus-pf build",
