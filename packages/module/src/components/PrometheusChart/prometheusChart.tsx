@@ -238,11 +238,8 @@ const getThresholdData = (
 ): GraphDataPoint[] => {
   const newThresholdData: GraphDataPoint[] = [];
   const start = end - span;
-  const step = span / 30;
-  _.range(start, end + step, step).forEach((t) => {
-    const x = new Date(t);
-    newThresholdData.push({ x, y: threshold });
-  });
+  newThresholdData.push({ x: new Date(start), y: threshold });
+  newThresholdData.push({ x: new Date(end), y: threshold });
   return newThresholdData;
 };
 
