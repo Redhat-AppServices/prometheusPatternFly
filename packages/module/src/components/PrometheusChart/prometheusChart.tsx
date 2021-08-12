@@ -35,7 +35,7 @@ import {
 } from "../../utils/get-prometheus-url";
 export interface PrometheusChartProps {
   graphType: GraphTypes;
-  fetchOptions: FetchOptions | (() => Promise<PrometheusResponse[]>);
+  fetchOptions: FetchOptions | (() => Promise<PrometheusResponse>);
   defaultSamples?: number;
   showLegend?: boolean;
   showStackedControl?: boolean;
@@ -356,7 +356,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 export const PrometheusChart: React.FunctionComponent<PrometheusChartProps> = ({
   fetchOptions,
   defaultSamples,
-  timespan = parsePrometheusDuration("30m"),
+  timespan,
   graphType,
   showLegend,
   pollInterval,
@@ -364,7 +364,7 @@ export const PrometheusChart: React.FunctionComponent<PrometheusChartProps> = ({
   thresholdText,
   formatSeriesTitle,
 }) => {
-  const [span, setSpan] = React.useState(timespan);
+  const [span, setSpan] = React.useState(timespan || parsePrometheusDuration("30m"));
   const [graphData, setGraphData] = React.useState<Series[][]>([]);
   const [thresholdData, setThresholdData] = React.useState<ThresholdData>();
   // Limit the number of samples so that the step size doesn't fall below minStep
