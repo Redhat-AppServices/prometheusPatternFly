@@ -1,7 +1,7 @@
 {
   "name": "@app-data-services/prometheus-pf-root",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "workspaces": ["packages/*"],
   "scripts": {
     "build": "yarn workspace @app-data-services/prometheus-pf build",

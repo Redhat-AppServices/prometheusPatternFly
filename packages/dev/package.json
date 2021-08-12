@@ -1,7 +1,7 @@
 {
   "name": "dev",
   "version": "0.0.0-development",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@patternfly/patternfly": "^4.115.2",
     "@patternfly/react-charts": "^6.15.3",
