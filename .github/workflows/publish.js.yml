@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-node@v2
       - run: yarn install
       - run: yarn build
-      - working-directory: ./app
+      - working-directory: ./packages/module/
         run: npm run semantic-release
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
