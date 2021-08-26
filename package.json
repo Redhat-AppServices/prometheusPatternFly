@@ -1,5 +1,5 @@
 {
-  "name": "@app-data-services/prometheus-pf-root",
+  "name": "@patternfly-labs/prometheus-pf-root",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
