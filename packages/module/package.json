@@ -1,5 +1,5 @@
 {
-  "name": "@app-data-services/prometheus-pf",
+  "name": "@patternfly-labs/pf-labs-prometheus",
   "version": "0.0.0-development",
   "description": "PatternFly charts the work with prometheus",
   "main": "./dist/cjs/index.js",
@@ -24,14 +24,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Redhat-AppServices/prometheusPatternFly.git"
+    "url": "https://github.com/patternfly-labs/prometheusPatternFly.git"
   },
   "keywords": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Redhat-AppServices/prometheusPatternFly/issues"
+    "url": "https://github.com/patternfly-labs/prometheusPatternFly/issues"
   },
-  "homepage": "https://github.com/Redhat-AppServices/prometheusPatternFly#readme",
+  "homepage": "https://github.com/patternfly-labs/prometheusPatternFly#readme",
   "devDependencies": {
     "@types/classnames": "^2.3.1",
     "@types/lodash-es": "^4.17.x",
