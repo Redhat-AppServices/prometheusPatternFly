@@ -5,7 +5,7 @@
   "license": "MIT",
   "workspaces": ["packages/*"],
   "scripts": {
-    "build": "yarn workspace @app-data-services/prometheus-pf build",
+    "build": "yarn workspace @patternfly-labs/pf-labs-prometheus build",
     "start": "yarn workspace dev start",
     "format:module": "prettier --check --write packages/module/src/**/*.{tsx,ts}",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --color",
