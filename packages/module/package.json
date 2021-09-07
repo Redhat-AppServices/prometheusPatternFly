@@ -1,6 +1,6 @@
 {
   "name": "@patternfly-labs/pf-labs-prometheus",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "PatternFly charts the work with prometheus",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
